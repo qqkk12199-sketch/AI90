@@ -1,1 +1,120 @@
-hihi
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>需求申請流程說明</title>
+<style>
+  :root {
+    --bg: #f3f6f8;
+    --surface: #ffffff;
+    --text: #1d2b33;
+    --muted: #5b6b75;
+    --line: #cfdae1;
+    --accent: #1f6f8b;
+    --accent-soft: #e0eef3;
+    --done: #2f7d55;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #121a1f;
+      --surface: #1a252c;
+      --text: #e6eef2;
+      --muted: #93a4ae;
+      --line: #2d3d46;
+      --accent: #6cc0dc;
+      --accent-soft: #1f3540;
+      --done: #6cc496;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+    line-height: 1.75;
+  }
+  main { max-width: 720px; margin: 0 auto; padding: 56px 20px 72px; }
+  h1 { font-size: clamp(1.8rem, 5vw, 2.4rem); margin: 0 0 12px; line-height: 1.3; }
+  .lead { color: var(--muted); margin: 0 0 40px; max-width: 34em; }
+
+  ol.flow { list-style: none; margin: 0; padding: 0; position: relative; }
+  ol.flow::before {
+    content: ""; position: absolute; left: 21px; top: 24px; bottom: 24px;
+    width: 2px; background: var(--line);
+  }
+  ol.flow li {
+    position: relative; display: flex; gap: 18px;
+    padding: 0 0 28px;
+  }
+  ol.flow li:last-child { padding-bottom: 0; }
+  .num {
+    flex: none; width: 44px; height: 44px; border-radius: 50%;
+    background: var(--surface); border: 2px solid var(--accent); color: var(--accent);
+    display: grid; place-items: center; font-weight: 700; z-index: 1;
+  }
+  li:last-child .num { background: var(--accent); color: var(--surface); }
+  .step {
+    flex: 1; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 10px; padding: 14px 18px;
+  }
+  .step h2 { margin: 0 0 2px; font-size: 1.15rem; }
+  .step p { margin: 0; color: var(--muted); font-size: .95rem; }
+
+  .note {
+    margin-top: 40px; padding: 14px 18px; background: var(--accent-soft);
+    border-radius: 10px; font-size: .95rem;
+  }
+  footer { margin-top: 32px; color: var(--muted); font-size: .85rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>需求申請流程說明</h1>
+  <p class="lead">有新的需求時，請依照下列五個步驟進行。每完成一步，才會進入下一步。</p>
+
+  <ol class="flow">
+    <li>
+      <div class="num">1</div>
+      <div class="step">
+        <h2>需求申請</h2>
+        <p>由需求方提出申請，簡單表達想解決的問題或想要的功能。</p>
+      </div>
+    </li>
+    <li>
+      <div class="num">2</div>
+      <div class="step">
+        <h2>說明需求</h2>
+        <p>與承辦人員說明細節，包含目的、內容、期望完成時間。</p>
+      </div>
+    </li>
+    <li>
+      <div class="num">3</div>
+      <div class="step">
+        <h2>同意</h2>
+        <p>雙方確認需求範圍與內容，並取得同意後才繼續。</p>
+      </div>
+    </li>
+    <li>
+      <div class="num">4</div>
+      <div class="step">
+        <h2>提出需求單</h2>
+        <p>將已同意的內容正式填寫為需求單並送出。</p>
+      </div>
+    </li>
+    <li>
+      <div class="num">5</div>
+      <div class="step">
+        <h2>進入排程</h2>
+        <p>需求單成立後，依優先順序排入工作排程，並通知預計開始時間。</p>
+      </div>
+    </li>
+  </ol>
+
+  <div class="note">提醒：未經同意前，不會提出需求單，也不會進入排程。</div>
+  <footer>如有疑問，請洽承辦人員。</footer>
+</main>
+</body>
+</html>
