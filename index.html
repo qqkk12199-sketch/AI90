@@ -6,7 +6,7 @@
 <title>需求申請流程說明</title>
 <style>
   :root {
-    --bg: #e8f3e9;
+    --bg: #ffd2a1;
     --surface: #ffffff;
     --text: #1d2b33;
     --muted: #5b6b75;
@@ -17,7 +17,7 @@
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #121c15;
+      --bg: #2b1a0c;
       --surface: #1a252c;
       --text: #e6eef2;
       --muted: #93a4ae;
@@ -68,6 +68,40 @@
     border-radius: 10px; font-size: .95rem;
   }
   footer { margin-top: 32px; color: var(--muted); font-size: .85rem; }
+
+  .signup { margin-top: 56px; }
+  .signup h2 { font-size: 1.4rem; margin: 0 0 6px; }
+  .signup > p { margin: 0 0 20px; color: var(--muted); }
+  form {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 10px; padding: 22px 20px;
+    display: grid; gap: 16px;
+  }
+  .row { display: grid; gap: 6px; }
+  .row.two { grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 540px) { .row.two { grid-template-columns: 1fr; } }
+  .field { display: grid; gap: 6px; }
+  label { font-weight: 600; font-size: .95rem; }
+  label .req { color: #c0392b; margin-left: 2px; }
+  input, textarea {
+    width: 100%; font: inherit; color: var(--text);
+    background: var(--bg); border: 1px solid var(--line);
+    border-radius: 8px; padding: 10px 12px;
+  }
+  textarea { min-height: 120px; resize: vertical; }
+  input:focus-visible, textarea:focus-visible, button:focus-visible {
+    outline: 3px solid var(--accent); outline-offset: 2px;
+  }
+  button {
+    font: inherit; font-weight: 700; cursor: pointer;
+    background: var(--accent); color: var(--surface);
+    border: 0; border-radius: 8px; padding: 12px 20px;
+  }
+  button:disabled { opacity: .6; cursor: wait; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  #msg { margin: 0; min-height: 1.5em; font-weight: 600; }
+  #msg.ok { color: var(--done); }
+  #msg.err { color: #c0392b; }
 </style>
 </head>
 <body>
@@ -114,7 +148,87 @@
   </ol>
 
   <div class="note">提醒：未經同意前，不會提出需求單，也不會進入排程。</div>
+  <section class="signup" id="signup">
+    <h2>需求申請報名表</h2>
+    <p>請填寫下列資料，送出後即完成第一步「需求申請」，承辦人員會再與你聯絡說明需求。</p>
+    <form id="signupForm" novalidate>
+      <div class="row two">
+        <div class="field">
+          <label for="name">姓名<span class="req">*</span></label>
+          <input id="name" name="name" type="text" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label for="unit">單位／部門</label>
+          <input id="unit" name="unit" type="text" autocomplete="organization">
+        </div>
+      </div>
+      <div class="row two">
+        <div class="field">
+          <label for="phone">電話<span class="req">*</span></label>
+          <input id="phone" name="phone" type="tel" autocomplete="tel" required>
+        </div>
+        <div class="field">
+          <label for="email">Email<span class="req">*</span></label>
+          <input id="email" name="email" type="email" autocomplete="email" required>
+        </div>
+      </div>
+      <div class="field">
+        <label for="need">需求簡述<span class="req">*</span></label>
+        <textarea id="need" name="need" required></textarea>
+      </div>
+      <div class="field">
+        <label for="due">期望完成日期</label>
+        <input id="due" name="due" type="date">
+      </div>
+      <div class="hp" aria-hidden="true">
+        <label for="website">請勿填寫此欄</label>
+        <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
+      </div>
+      <button type="submit" id="submitBtn">送出報名</button>
+      <p id="msg" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+
   <footer>如有疑問，請洽承辦人員。</footer>
 </main>
+<script>
+  // 部署 Google Apps Script 後，把「網頁應用程式網址」貼在下方引號內
+  const SCRIPT_URL = "貼上你的網頁應用程式網址";
+
+  const form = document.getElementById("signupForm");
+  const btn = document.getElementById("submitBtn");
+  const msg = document.getElementById("msg");
+
+  function show(text, type) {
+    msg.textContent = text;
+    msg.className = type || "";
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+    if (form.website.value) return; // 機器人欄位被填，直接略過
+    if (!SCRIPT_URL.startsWith("https://")) {
+      show("尚未設定 Google Apps Script 網址，請先完成設定。", "err");
+      return;
+    }
+    btn.disabled = true;
+    show("送出中…");
+    try {
+      const data = new URLSearchParams(new FormData(form));
+      // no-cors：Apps Script 不回傳 CORS 標頭，送出後無法讀取回應，視為成功
+      await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", body: data });
+      form.reset();
+      show("報名完成，已收到你的資料，我們會盡快與你聯絡。", "ok");
+    } catch (err) {
+      show("送出失敗，請檢查網路後再試一次。", "err");
+    } finally {
+      btn.disabled = false;
+    }
+  });
+</script>
 </body>
 </html>
